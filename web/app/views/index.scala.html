@@ -1,0 +1,49 @@
+@import views.rendergame.MixedGame
+@import lib.Clanner
+@import providers.ReferenceProvider
+@import java.time.format.DateTimeFormatter
+@(games: List[MixedGame], events: List[Map[String, String]], latestClanwar: Option[com.actionfps.clans.ClanwarMeta], bulletin: Option[providers.ReferenceProvider.Heading])(implicit clanner: Clanner)
+@bulletin.map { h =>
+    <div id="bulletin">
+        <div class="when">
+            <time is="relative-time" datetime="@h.at.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)">@h.at.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)</time>
+        </div>
+        <div class="cnt">
+            @h.html
+        </div>
+    </div>
+}
+<div id="live-events">
+    <ol class="LiveEvents live-events">
+        @events.take(7).map { event =>
+            <li><a href="/player/?id=@event("user")">@event("text")</a>
+                <span> </span>
+                <span class="when">
+                    <time is="relative-time" datetime="@event("date")">@event("date")</time>
+                </span>
+            </li>
+        }
+    </ol>
+</div>
+
+<div id="games">
+
+    <div id="dynamic-games">
+
+    </div>
+
+    <div id="new-games"></div>
+    @latestClanwar.map { clanwar =>
+        <div id="latest-clanwar">@views.html.clanwar.render_clanwar(clanwar, false)</div>
+    }
+
+    <div id="existing-games">
+    @games.map { game =>
+        @views.html.rendergame.render_game(game)
+    }
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script src="/assets/live/live.js"></script>
